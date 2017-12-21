@@ -1,0 +1,40 @@
+#!/bin/sh
+# darx0r binary grep
+
+ARGS_PROGRAM=$0
+ARGS_PATTERN=$1
+ARGS_FILE=$2
+NUM_OF_ARGS=2 
+
+usage() 
+{ 
+    echo \
+"Usage: $ARGS_PROGRAM PATTERN [FILE]
+Try '$ARGS_PROGRAM --help' for more information."
+
+} 
+
+check_args()
+{
+    argc=$1
+    if [  $argc -lt $NUM_OF_ARGS ] 
+    then 
+        usage
+        exit 1
+    fi 
+
+    if [[ ( $argc == "--help") ||  $argc == "-h" ]] 
+    then 
+        usage
+        exit 0
+    fi
+}
+
+
+check_args $#
+
+offset=`xxd -p $ARGS_FILE | tr -d '\n' | grep -ioba $ARGS_PATTERN | cut -d":" -f 1`
+if [ $offset ]
+then
+    echo $ARGS_FILE:$offset
+fi
